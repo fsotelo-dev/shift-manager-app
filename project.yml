@@ -1,0 +1,38 @@
+# Generate the Xcode project on a Mac:  brew install xcodegen && xcodegen
+name: WorkApp
+options:
+  bundleIdPrefix: com.yourcompany
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  WorkApp:
+    type: application
+    platform: iOS
+    sources: [WorkApp]
+    info:
+      path: WorkApp/Info.plist
+      properties:
+        CFBundleDisplayName: Shift Manager
+        NSCameraUsageDescription: Take photos of closing tasks so a manager can check them.
+        UIBackgroundModes: [remote-notification]
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.workapp
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+    # Uncomment when you switch Config.useCloudKit to true (needs a paid Apple Developer account):
+    # entitlements:
+    #   path: WorkApp/WorkApp.entitlements
+    #   properties:
+    #     aps-environment: development
+    #     com.apple.developer.icloud-services: [CloudKit]
+    #     com.apple.developer.icloud-container-identifiers: [iCloud.com.yourcompany.workapp]

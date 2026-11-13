@@ -1,0 +1,7 @@
+*.xcodeproj/
+WorkApp/Info.plist
+WorkApp/*.entitlements
+.DS_Store
+xcuserdata/
+DerivedData/
+build/
