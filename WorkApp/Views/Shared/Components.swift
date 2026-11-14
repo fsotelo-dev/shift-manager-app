@@ -1,11 +1,93 @@
 import SwiftUI
 import UIKit
 
+extension Color {
+    init(hex: UInt32) {
+        self.init(red: Double((hex >> 16) & 0xFF) / 255, green: Double((hex >> 8) & 0xFF) / 255, blue: Double(hex & 0xFF) / 255)
+    }
+}
+
+/// Light / Dark / follow the phone. Stored in UserDefaults under "appearance".
+enum Appearance: String, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var name: String { switch self { case .system: "System"; case .light: "Light"; case .dark: "Dark" } }
+    var scheme: ColorScheme? { switch self { case .system: nil; case .light: .light; case .dark: .dark } }
+}
+
+/// Color palette. Stored in UserDefaults under "palette".
+enum Palette: String, CaseIterable, Identifiable {
+    case adobo, classic
+    var id: String { rawValue }
+    var name: String { self == .adobo ? "Adobo (warm red)" : "Classic blue" }
+}
+
 enum Theme {
-    static let accent = Color(red: 0.16, green: 0.36, blue: 0.85)
+    static var palette: Palette { Palette(rawValue: UserDefaults.standard.string(forKey: "palette") ?? "") ?? .adobo }
+    static var accent: Color { palette == .adobo ? Color(hex: 0xA81612) : Color(hex: 0x295BD9) }
+    /// Brand gradient used for the nav bar, primary buttons and progress bars.
+    static var gradient: LinearGradient {
+        let colors = palette == .adobo ? [Color(hex: 0xB5261E), Color(hex: 0x451400)]
+                                       : [Color(hex: 0x3B6FF0), Color(hex: 0x1E3A8A)]
+        return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
     static let alert = Color(red: 0.86, green: 0.23, blue: 0.20)
     static let ok = Color(red: 0.13, green: 0.60, blue: 0.33)
     static let warn = Color(red: 0.93, green: 0.55, blue: 0.10)
+}
+
+extension View {
+    /// Gradient navigation bar with white title and buttons.
+    func themedNavBar() -> some View {
+        toolbarBackground(Theme.gradient, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+    }
+}
+
+struct GradientButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundStyle(.white)
+            .padding(.vertical, 14)
+            .frame(maxWidth: .infinity)
+            .background(Theme.gradient, in: RoundedRectangle(cornerRadius: 12))
+            .opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+/// Theme picker shown in More (managers) and the profile menu (crew).
+struct AppearanceSection: View {
+    @AppStorage("appearance") private var appearance = Appearance.system.rawValue
+    @AppStorage("palette") private var palette = Palette.adobo.rawValue
+
+    var body: some View {
+        Section {
+            Picker("Theme", selection: $appearance) {
+                ForEach(Appearance.allCases) { Text($0.name).tag($0.rawValue) }
+            }
+            Picker("Colors", selection: $palette) {
+                ForEach(Palette.allCases) { Text($0.name).tag($0.rawValue) }
+            }
+            RoundedRectangle(cornerRadius: 10).fill(Theme.gradient).frame(height: 44)
+                .overlay(Text("Preview").font(.headline).foregroundStyle(.white))
+                .id(palette)
+        } header: { Text("Appearance") } footer: {
+            Text("“System” follows your iPhone's Light/Dark setting.")
+        }
+    }
+}
+
+struct AppearanceSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Form { AppearanceSection() }
+                .navigationTitle("Appearance").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+    }
 }
 
 /// Red banner shown at the top of every main screen while a time block (e.g. line lock) is active.
@@ -84,7 +166,7 @@ struct ProgressHeader: View {
                 Spacer()
                 Text("\(done)/\(total)").font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
             }
-            ProgressView(value: Double(done), total: Double(max(total, 1))).tint(Theme.ok)
+            ProgressView(value: Double(done), total: Double(max(total, 1))).tint(Theme.accent)
         }
         .padding(.vertical, 4)
     }

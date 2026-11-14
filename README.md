@@ -11,6 +11,7 @@ An iOS app (SwiftUI, iOS 16+) for restaurant shift managers and crew.
   - *Set up tasks*: nightly closing tasks by station, plus "tonight only" tasks you can add any time, including after close at 10 PM. Crew see them within about 20 seconds.
   - *Review photos*: every task with its photo status. Open one, look at the photo full screen, then **Approve** or send it back for a **Redo** with a note. You can do this without leaving the office.
 - **Notes**: shared to-do notes between managers.
+- **More → Appearance**: Theme (System / Light / Dark, default System, which follows the phone) and Colors (Adobo warm-red gradient, the default, or Classic blue). Crew get the same options from the profile menu.
 
 **Crew**
 - See tonight's closing tasks, filter to your station, take a photo for each one, and send it to the manager.

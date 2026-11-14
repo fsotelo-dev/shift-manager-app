@@ -117,6 +117,7 @@ struct ReviewDetailView: View {
         }
         .navigationTitle(task.title)
         .navigationBarTitleDisplayMode(.inline)
+        .themedNavBar()
         .onAppear { comment = sub?.managerComment ?? "" }
     }
 }

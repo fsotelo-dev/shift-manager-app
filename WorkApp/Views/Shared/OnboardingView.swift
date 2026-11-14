@@ -40,9 +40,9 @@ struct OnboardingView: View {
                     state.userName = name.trimmingCharacters(in: .whitespaces)
                     state.role = role
                 } label: {
-                    Text("Continue").frame(maxWidth: .infinity).fontWeight(.semibold)
+                    Text("Continue")
                 }
-                .buttonStyle(.borderedProminent).controlSize(.large)
+                .buttonStyle(GradientButtonStyle())
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 .listRowBackground(Color.clear)
             }

@@ -21,7 +21,6 @@ struct WorkApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(state)
-                .tint(Theme.accent)
         }
     }
 }
@@ -42,6 +41,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
 struct RootView: View {
     @EnvironmentObject var state: AppState
+    @AppStorage("appearance") private var appearance = Appearance.system.rawValue
+    @AppStorage("palette") private var palette = Palette.adobo.rawValue
 
     var body: some View {
         Group {
@@ -51,6 +52,9 @@ struct RootView: View {
             case .crew?: CrewHome()
             }
         }
+        .id(palette) // rebuild screens with the new colors
+        .tint(Theme.accent)
+        .preferredColorScheme(Appearance(rawValue: appearance)?.scheme) // nil = follow the phone
         .task(id: state.role) {
             guard state.role != nil else { return }
             await Notifier.requestAuth()

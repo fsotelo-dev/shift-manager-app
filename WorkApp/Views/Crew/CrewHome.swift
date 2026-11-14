@@ -3,6 +3,7 @@ import SwiftUI
 struct CrewHome: View {
     @EnvironmentObject var state: AppState
     @AppStorage("crewStation") private var station = "All"
+    @State private var showAppearance = false
 
     var body: some View {
         let tasks = state.tonightTasks.filter { station == "All" || $0.station == station }
@@ -50,12 +51,15 @@ struct CrewHome: View {
             }
             .safeAreaInset(edge: .top) { TimeBlockBanner() }
             .navigationTitle("Hi, \(state.userName)")
+            .themedNavBar()
+            .sheet(isPresented: $showAppearance) { AppearanceSheet() }
             .navigationDestination(for: ClosingTask.self) { CrewTaskView(task: $0) }
             .refreshable { await state.refreshClosing() }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button("Refresh") { Task { await state.refreshClosing() } }
+                        Button("Appearance") { showAppearance = true }
                         Button("Switch user", role: .destructive) { state.signOut() }
                     } label: { Image(systemName: "person.crop.circle") }
                 }
@@ -122,18 +126,17 @@ struct CrewTaskView: View {
                                 self.captured = nil
                             }
                         } label: {
-                            (sending ? Text("Sending…") : Text("Send to manager")).frame(maxWidth: .infinity)
+                            sending ? Text("Sending…") : Text("Send to manager")
                         }
-                        .buttonStyle(.borderedProminent).controlSize(.large).disabled(sending)
+                        .buttonStyle(GradientButtonStyle()).disabled(sending)
                     }
                 } else {
                     if let sub { SubmissionPhoto(submission: sub) }
                     if sub?.status != .approved {
                         Button { showCamera = true } label: {
                             Label(sub == nil ? "Take photo" : "Retake photo", systemImage: "camera.fill")
-                                .frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(.borderedProminent).controlSize(.large)
+                        .buttonStyle(GradientButtonStyle())
                     }
                 }
             }
@@ -141,6 +144,7 @@ struct CrewTaskView: View {
         }
         .navigationTitle(task.title)
         .navigationBarTitleDisplayMode(.inline)
+        .themedNavBar()
         .fullScreenCover(isPresented: $showCamera) {
             CameraPicker { captured = $0 }.ignoresSafeArea()
         }
