@@ -24,7 +24,7 @@ targets:
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.workapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.fsotelo.shiftmanager
         SWIFT_VERSION: "5.0"
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"

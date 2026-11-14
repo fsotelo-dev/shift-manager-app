@@ -19,9 +19,11 @@ An iOS app (SwiftUI, iOS 16+) for restaurant shift managers and crew.
 
 ## Run it
 
-1. On a Mac with Xcode 15 or newer: `brew install xcodegen`
-2. In this folder: `xcodegen` then `open WorkApp.xcodeproj`
-3. Pick your team under *Signing & Capabilities* and run on a simulator or iPhone.
+1. On a Mac with Xcode 15 or newer, open `WorkApp.xcodeproj`.
+2. Under *Signing & Capabilities*, pick your team (a free Apple ID works for your own iPhone).
+3. Plug in your iPhone (with Developer Mode on), pick it as the run destination, and press Run.
+
+(`project.yml` is kept for regenerating the project with XcodeGen once CloudKit is turned on.)
 
 The manager PIN is `1234`. Change `Config.managerPIN` in `WorkApp/App/WorkApp.swift`.
 
